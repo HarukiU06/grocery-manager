@@ -1,0 +1,20 @@
+/** Ingredient IDs added by the "Add common staples" action, in display order. */
+export const COMMON_STAPLE_IDS: readonly string[] = [
+  'soy-sauce',
+  'salt',
+  'sugar',
+  'miso',
+  'mirin',
+  'sake',
+  'rice-vinegar',
+  'cooking-oil',
+  'sesame-oil',
+  'black-pepper',
+  'dashi-granules',
+  'ketchup',
+  'mayonnaise',
+  'flour',
+  'rice',
+  'garlic',
+  'ginger',
+];
