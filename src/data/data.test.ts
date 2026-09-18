@@ -4,6 +4,7 @@ import { toGrams } from '../domain/units';
 import { NUTRIENT_KEYS } from '../domain/types';
 import { CONVERSIONS } from './conversions';
 import { ALCOHOL_INGREDIENT_IDS, NUTRITION } from './nutrition';
+import { DAILY_TARGETS } from './targets';
 import { PRESET_INGREDIENT_IDS, PRESET_INGREDIENTS } from './ingredients';
 import { PRESET_RECIPES } from './recipes';
 
@@ -131,6 +132,16 @@ describe('nutrition data', () => {
       row.forEach((value, index) => {
         expect(value, `${id} index ${index}`).toBeLessThanOrEqual(max[index]);
       });
+    }
+  });
+});
+
+describe('daily targets', () => {
+  it('define every nutrient with a positive value', () => {
+    for (const [profile, totals] of Object.entries(DAILY_TARGETS)) {
+      for (const key of NUTRIENT_KEYS) {
+        expect(totals[key], `${profile}.${key}`).toBeGreaterThan(0);
+      }
     }
   });
 });

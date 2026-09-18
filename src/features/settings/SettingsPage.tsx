@@ -6,7 +6,7 @@ import { PageHeader } from '../../components/PageHeader';
 import { ServingsStepper } from '../../components/ServingsStepper';
 import { useToastStore } from '../../components/toastStore';
 import { todayIso } from '../../domain/dates';
-import type { Lang, PersistedState } from '../../domain/types';
+import type { Lang, NutritionTargetKey, PersistedState } from '../../domain/types';
 import { useT } from '../../i18n';
 import { downloadTextFile, exportFilename, parseImportedState, serializeState } from '../../store/exportImport';
 import { pickPersisted, useAppStore } from '../../store/useAppStore';
@@ -15,6 +15,7 @@ import { ClearDataSheet } from './ClearDataSheet';
 const APP_VERSION = '0.1.0';
 const LANGS: Lang[] = ['ja', 'en'];
 const THRESHOLDS = [1, 2, 3, 4, 5];
+const TARGET_KEYS: NutritionTargetKey[] = ['off', 'adult_male', 'adult_female'];
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -35,6 +36,8 @@ export function SettingsPage() {
   const setTrackExpiry = useAppStore((s) => s.setTrackExpiry);
   const almostThreshold = useAppStore((s) => s.almostThreshold);
   const setAlmostThreshold = useAppStore((s) => s.setAlmostThreshold);
+  const nutritionTarget = useAppStore((s) => s.nutritionTarget);
+  const setNutritionTarget = useAppStore((s) => s.setNutritionTarget);
   const importState = useAppStore((s) => s.importState);
   const showToast = useToastStore((s) => s.show);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -100,6 +103,17 @@ export function SettingsPage() {
           {THRESHOLDS.map((n) => (
             <Chip key={n} selected={almostThreshold === n} onClick={() => setAlmostThreshold(n)}>
               {String(n)}
+            </Chip>
+          ))}
+        </div>
+      </Section>
+
+      <Section title={t('settings.nutritionTarget')}>
+        <p className="text-xs text-stone-500">{t('settings.nutritionTargetHint')}</p>
+        <div className="flex flex-wrap gap-2">
+          {TARGET_KEYS.map((key) => (
+            <Chip key={key} selected={nutritionTarget === key} onClick={() => setNutritionTarget(key)}>
+              {t(`target.${key}`)}
             </Chip>
           ))}
         </div>

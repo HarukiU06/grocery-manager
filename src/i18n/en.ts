@@ -177,6 +177,12 @@ export const en = {
   'settings.trackExpiryHint': 'Turn this off to hide the date field and its badges. Dates you already entered are kept.',
   'settings.almostThreshold': '"Almost there" threshold',
   'settings.almostThresholdHint': 'Show recipes missing up to this many ingredients.',
+  'settings.nutritionTarget': 'Daily nutrition reference',
+  'settings.nutritionTargetHint': 'Shows how a meal compares with a typical adult daily intake. Estimates only.',
+  'target.off': 'Do not show',
+  'target.adult_male': 'Adult male',
+  'target.adult_female': 'Adult female',
+
   'settings.data': 'Data',
   'settings.export': 'Export JSON',
   'settings.import': 'Import JSON',

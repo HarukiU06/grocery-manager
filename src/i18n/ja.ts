@@ -179,6 +179,12 @@ export const ja: Record<TranslationKey, string> = {
   'settings.trackExpiryHint': 'オフにすると入力欄とバッジを隠します。入力済みの日付は残ります。',
   'settings.almostThreshold': '「あと少し」の基準',
   'settings.almostThresholdHint': '不足がこの品数までのレシピを「あと少し」に表示します。',
+  'settings.nutritionTarget': '栄養の目安',
+  'settings.nutritionTargetHint': '成人の1日の摂取量と比べた割合を表示します。あくまで目安です。',
+  'target.off': '表示しない',
+  'target.adult_male': '成人男性',
+  'target.adult_female': '成人女性',
+
   'settings.data': 'データ',
   'settings.export': 'JSONをエクスポート',
   'settings.import': 'JSONをインポート',
