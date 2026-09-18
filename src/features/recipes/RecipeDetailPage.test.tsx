@@ -50,4 +50,21 @@ describe('RecipeDetailPage', () => {
     renderDetail('nope');
     expect(screen.getByText('Recipe not found.')).toBeInTheDocument();
   });
+  it('shows nutrition per serving and for the whole recipe', async () => {
+    renderDetail('teriyaki-chicken');
+    const panel = screen.getByRole('region', { name: 'Nutrition' });
+    expect(within(panel).getByRole('button', { name: 'Per serving' })).toHaveAttribute('aria-pressed', 'true');
+    expect(within(panel).getByText('Energy')).toBeInTheDocument();
+    await userEvent.click(within(panel).getByRole('button', { name: 'Whole recipe' }));
+    expect(within(panel).getByRole('button', { name: 'Whole recipe' })).toHaveAttribute('aria-pressed', 'true');
+  });
+  it('switches ingredient amounts to grams', async () => {
+    renderDetail('teriyaki-chicken');
+    expect(screen.getByText('300 g')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Grams' }));
+    expect(useAppStore.getState().amountDisplay).toBe('grams');
+    // Soy sauce and mirin are both 2 tbsp, which is about 36 g each; sugar's 1 tbsp is 9 g.
+    expect(screen.getAllByText('36 g')).toHaveLength(2);
+    expect(screen.getByText('9 g')).toBeInTheDocument();
+  });
 });

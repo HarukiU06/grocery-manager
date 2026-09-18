@@ -1,13 +1,18 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
+import { Chip } from '../../components/Chip';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { NutritionPanel } from '../../components/NutritionPanel';
 import { PageHeader } from '../../components/PageHeader';
 import { ServingsStepper } from '../../components/ServingsStepper';
 import { useToastStore } from '../../components/toastStore';
 import { localize, localizeList } from '../../domain/localize';
-import { formatIngredientAmount } from '../../domain/scaling';
+import { computeRecipeNutrition } from '../../domain/nutrition';
+import { formatIngredientAmount, scaleAmount } from '../../domain/scaling';
+import type { RecipeIngredient } from '../../domain/types';
+import { toGrams } from '../../domain/units';
 import { useLang, useT } from '../../i18n';
 import { useIngredientName, usePantryIds, useRecipe } from '../../store/selectors';
 import { useAppStore } from '../../store/useAppStore';
@@ -22,13 +27,22 @@ export function RecipeDetailPage() {
   const nameOf = useIngredientName();
   const servings = useAppStore((s) => s.servings);
   const setServings = useAppStore((s) => s.setServings);
+  const amountDisplay = useAppStore((s) => s.amountDisplay);
+  const setAmountDisplay = useAppStore((s) => s.setAmountDisplay);
   const addToShopping = useAppStore((s) => s.addToShopping);
   const duplicateRecipe = useAppStore((s) => s.duplicateRecipe);
   const deleteCustomRecipe = useAppStore((s) => s.deleteCustomRecipe);
   const showToast = useToastStore((s) => s.show);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [wholeRecipe, setWholeRecipe] = useState(false);
 
-  if (!recipe) {
+  // Computed before the early return so the hook order never depends on the route parameter.
+  const nutrition = useMemo(
+    () => (recipe ? computeRecipeNutrition(recipe, servings) : null),
+    [recipe, servings],
+  );
+
+  if (!recipe || !nutrition) {
     return (
       <div className="p-4">
         <PageHeader title={t('recipes.title')} backTo="/recipes" />
@@ -36,6 +50,14 @@ export function RecipeDetailPage() {
       </div>
     );
   }
+
+  const amountLabel = (ri: RecipeIngredient) => {
+    if (amountDisplay === 'grams' && ri.amount !== undefined && ri.unit) {
+      const grams = toGrams(scaleAmount(ri.amount, recipe.baseServings, servings), ri.unit, ri.ingredientId);
+      if (grams !== null) return `${Math.round(grams)} ${t('unit.g')}`;
+    }
+    return formatIngredientAmount(ri, recipe.baseServings, servings, lang, t);
+  };
 
   const missing = recipe.ingredients
     .filter((ri) => !ri.optional && !pantryIds.has(ri.ingredientId))
@@ -66,8 +88,17 @@ export function RecipeDetailPage() {
       </div>
       {recipe.description && <p className="mb-4 text-sm text-stone-700">{localize(recipe.description, lang)}</p>}
 
-      <div className="mb-4">
+      <div className="mb-3">
         <ServingsStepper value={servings} onChange={setServings} />
+      </div>
+
+      <div className="mb-4 flex gap-2">
+        <Chip selected={amountDisplay === 'recipe'} onClick={() => setAmountDisplay('recipe')}>
+          {t('recipe.amountAsWritten')}
+        </Chip>
+        <Chip selected={amountDisplay === 'grams'} onClick={() => setAmountDisplay('grams')}>
+          {t('recipe.amountGrams')}
+        </Chip>
       </div>
 
       <section className="mb-6">
@@ -90,9 +121,7 @@ export function RecipeDetailPage() {
                   )}
                 </span>
                 <span className="flex shrink-0 items-center gap-2">
-                  <span className="text-stone-700">
-                    {formatIngredientAmount(ri, recipe.baseServings, servings, lang, t)}
-                  </span>
+                  <span className="text-stone-700">{amountLabel(ri)}</span>
                   {have ? (
                     <Badge tone="green">{t('recipe.have')}</Badge>
                   ) : (
@@ -119,6 +148,24 @@ export function RecipeDetailPage() {
             <li key={index}>{step}</li>
           ))}
         </ol>
+      </section>
+
+      <section aria-label={t('nutrition.title')} className="mb-6">
+        <h2 className="mb-2 text-base font-semibold">{t('nutrition.title')}</h2>
+        <div className="mb-2 flex gap-2">
+          <Chip selected={!wholeRecipe} onClick={() => setWholeRecipe(false)}>
+            {t('nutrition.perServing')}
+          </Chip>
+          <Chip selected={wholeRecipe} onClick={() => setWholeRecipe(true)}>
+            {t('nutrition.whole')}
+          </Chip>
+        </div>
+        <div className="rounded-xl border border-stone-200 bg-white p-3">
+          <NutritionPanel
+            totals={wholeRecipe ? nutrition.total : nutrition.perServing}
+            unknownCount={nutrition.unknownIngredientIds.length}
+          />
+        </div>
       </section>
 
       <div className="flex flex-wrap gap-2">
