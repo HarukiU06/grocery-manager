@@ -4,7 +4,7 @@ import { toAsciiDigits, unitFromAlias } from '../unitAliases';
 import type { ParsedIngredientLine, ParsedRecipe } from './types';
 
 const NO_AMOUNT = ['適量', '少々', 'お好みで', '少量', 'to taste'];
-const BULLET = /^[\s・*\-–—•‣●○◦　]*(?:\d+[.)]\s*)?/;
+const BULLET = /^[\s・*\-–—•‣●○◦\u3000]*(?:\d+[.)]\s*)?/;
 /** Japanese spoon and cup measures put the unit before the number. */
 const PREFIX_UNIT = /^(.*?)(大さじ|大匙|小さじ|小匙|カップ)\s*(\d+(?:\.\d+)?(?:\/\d+)?)$/;
 const TRAILING = /^(.*?)[\s:：]*(\d+(?:\.\d+)?(?:\/\d+)?)\s*([^\s\d]*)$/;
@@ -29,7 +29,7 @@ interface SplitLine {
 /** Pulls an amount out of one line, leaving the ingredient name. */
 function splitLine(line: string): SplitLine {
   const cleaned = toAsciiDigits(line.replace(BULLET, ''))
-    .replace(/[\t　]+/g, ' ')
+    .replace(/[\t\u3000]+/g, ' ')
     .trim();
 
   if (NO_AMOUNT.some((word) => cleaned.includes(word))) {
