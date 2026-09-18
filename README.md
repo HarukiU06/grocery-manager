@@ -7,6 +7,21 @@ A bilingual (Japanese / English) web app for keeping track of the groceries and 
 
 Every recipe scales to any number of servings (1–12). The app ships with 64 preset recipes (Japanese, Western, Chinese and Korean-inspired) and a catalog of about 160 ingredients, and you can add your own ingredients and recipes.
 
+## Live app
+
+**https://harukiu06.github.io/grocery-manager/**
+
+No install, no account and no server: open the link and start adding what's in your fridge. `main` auto-deploys here on every push via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+
+### Add it to your phone's home screen
+
+The app works like a regular website but feels like an app once pinned:
+
+- **iPhone (Safari):** open the link, tap the Share icon, then **Add to Home Screen**.
+- **Android (Chrome):** open the link, tap the ⋮ menu, then **Add to Home screen** (or **Install app** if offered).
+
+Each browser/device keeps its own data (see [How data is stored](#how-data-is-stored)); use **Settings → Export JSON** / **Import JSON** to move your pantry and recipes between them.
+
 ## Features
 
 - **Pantry** — search the bilingual ingredient catalog and add what you have. Optional quantity, best-before date (with "expiring soon" and "expired" badges) and storage location (fridge / freezer / pantry). One tap adds the common Japanese staples (soy sauce, miso, mirin, etc.).
