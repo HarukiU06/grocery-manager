@@ -29,14 +29,14 @@ function PantryItemForm({ item, onClose }: { item: PantryItem; onClose: () => vo
   const nameOf = useIngredientName();
   const updatePantryItem = useAppStore((s) => s.updatePantryItem);
   const removePantryItem = useAppStore((s) => s.removePantryItem);
-  const [quantity, setQuantity] = useState(item.quantity ?? '');
+  const [quantity, setQuantity] = useState(item.quantity ? String(item.quantity.amount) : '');
   const [expiresOn, setExpiresOn] = useState(item.expiresOn ?? '');
   const [location, setLocation] = useState<StorageLocation | ''>(item.location ?? '');
 
   const save = (event: FormEvent) => {
     event.preventDefault();
     updatePantryItem(item.ingredientId, {
-      quantity: quantity.trim() || undefined,
+      quantity: quantity.trim() ? { amount: Number(quantity), unit: 'g' as const } : undefined,
       expiresOn: expiresOn || undefined,
       location: location || undefined,
     });

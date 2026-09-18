@@ -22,6 +22,26 @@ describe('export/import', () => {
     const parsedHigh = parseImportedState(JSON.stringify({ ...defaultPersistedState(), almostThreshold: 99 }));
     expect(parsedHigh.almostThreshold).toBe(5);
   });
+  it('imports a version 1 file and migrates it', () => {
+    const v1 = JSON.stringify({
+      schemaVersion: 1,
+      language: 'ja',
+      servings: 2,
+      almostThreshold: 2,
+      customIngredients: [],
+      pantry: [{ ingredientId: 'flour', quantity: '300g', addedOn: '2026-01-01' }],
+      customRecipes: [],
+      shoppingList: [],
+    });
+    const parsed = parseImportedState(v1);
+    expect(parsed.schemaVersion).toBe(2);
+    expect(parsed.pantry[0].quantity).toEqual({ amount: 300, unit: 'g' });
+    expect(parsed.cookingLog).toEqual([]);
+  });
+  it('rejects a malformed cook entry', () => {
+    const bad = JSON.stringify({ ...defaultPersistedState(), cookingLog: [{ nope: 1 }] });
+    expect(() => parseImportedState(bad)).toThrow();
+  });
   it('builds a dated filename', () => {
     expect(exportFilename('2026-09-18')).toBe('grocery-manager-2026-09-18.json');
   });

@@ -25,7 +25,7 @@ describe('SettingsPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Export JSON' }));
     expect(spy).toHaveBeenCalledWith(
       expect.stringMatching(/^grocery-manager-\d{4}-\d{2}-\d{2}\.json$/),
-      expect.stringContaining('"schemaVersion": 1'),
+      expect.stringContaining('"schemaVersion": 2'),
     );
     spy.mockRestore();
   });

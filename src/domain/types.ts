@@ -48,9 +48,15 @@ export interface Ingredient {
 export type StorageLocation = 'fridge' | 'freezer' | 'pantry';
 export const STORAGE_LOCATIONS: readonly StorageLocation[] = ['fridge', 'freezer', 'pantry'];
 
+export interface Quantity {
+  amount: number;
+  unit: Unit;
+}
+
 export interface PantryItem {
   ingredientId: string;
-  quantity?: string;
+  quantity?: Quantity;
+  note?: string;
   expiresOn?: string;
   location?: StorageLocation;
   addedOn: string;
@@ -138,15 +144,50 @@ export interface ShoppingItem {
   addedOn: string;
 }
 
-export const CURRENT_SCHEMA_VERSION = 1;
+export type AmountDisplay = 'recipe' | 'grams';
+export type NutritionTargetKey = 'off' | 'adult_male' | 'adult_female';
+
+export const NUTRIENT_KEYS = [
+  'energy',
+  'protein',
+  'fat',
+  'carbs',
+  'fiber',
+  'salt',
+  'calcium',
+  'iron',
+  'potassium',
+  'vitaminA',
+  'vitaminB1',
+  'vitaminB2',
+  'vitaminC',
+  'vitaminD',
+] as const;
+export type NutrientKey = (typeof NUTRIENT_KEYS)[number];
+export type NutritionTotals = Record<NutrientKey, number>;
+
+export interface CookEntry {
+  id: string;
+  recipeId: string;
+  recipeName: LocalizedText;
+  servings: number;
+  cookedOn: string;
+  nutrition?: NutritionTotals;
+}
+
+export const CURRENT_SCHEMA_VERSION = 2;
 
 export interface PersistedState {
   schemaVersion: number;
   language: Lang;
   servings: number;
   almostThreshold: number;
+  trackExpiry: boolean;
+  amountDisplay: AmountDisplay;
+  nutritionTarget: NutritionTargetKey;
   customIngredients: Ingredient[];
   pantry: PantryItem[];
   customRecipes: Recipe[];
   shoppingList: ShoppingItem[];
+  cookingLog: CookEntry[];
 }

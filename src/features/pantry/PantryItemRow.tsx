@@ -26,7 +26,7 @@ export function PantryItemRow({ row, today, onSelect }: Props) {
       >
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-sm font-medium text-stone-900">{name}</span>
-          {item.quantity && <span className="text-xs text-stone-500">{item.quantity}</span>}
+          {item.quantity && <span className="text-xs text-stone-500">{item.quantity.amount}</span>}
         </span>
         <span className="flex shrink-0 items-center gap-1">
           {item.location && <Badge tone="blue">{t(`location.${item.location}`)}</Badge>}

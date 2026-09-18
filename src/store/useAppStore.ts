@@ -5,9 +5,12 @@ import { todayIso } from '../domain/dates';
 import { newId } from '../domain/ids';
 import {
   CURRENT_SCHEMA_VERSION,
+  type AmountDisplay,
+  type CookEntry,
   type Ingredient,
   type Lang,
   type LocalizedText,
+  type NutritionTargetKey,
   type PantryItem,
   type PersistedState,
   type Recipe,
@@ -45,6 +48,16 @@ export function isStorageAvailable(): boolean {
 }
 
 export type PantryItemFields = Omit<PantryItem, 'ingredientId' | 'addedOn'>;
+
+/** Which parts of the stored data a delete should remove. */
+export interface ClearSelection {
+  pantry?: boolean;
+  shoppingList?: boolean;
+  customRecipes?: boolean;
+  customIngredients?: boolean;
+  cookingLog?: boolean;
+  settings?: boolean;
+}
 export type IngredientInput = Omit<Ingredient, 'id' | 'isPreset'>;
 export type RecipeInput = Omit<Recipe, 'id' | 'isPreset'>;
 
@@ -66,6 +79,12 @@ export interface AppActions {
   markBought: (ingredientId: string) => void;
   importState: (state: PersistedState) => void;
   resetAll: () => void;
+  setTrackExpiry: (value: boolean) => void;
+  setAmountDisplay: (value: AmountDisplay) => void;
+  setNutritionTarget: (value: NutritionTargetKey) => void;
+  logCook: (entry: Omit<CookEntry, 'id'>) => CookEntry;
+  deleteCookEntry: (id: string) => void;
+  clearData: (selection: ClearSelection) => void;
 }
 
 export type AppStore = PersistedState & AppActions;
@@ -75,10 +94,14 @@ const PERSISTED_KEYS: readonly (keyof PersistedState)[] = [
   'language',
   'servings',
   'almostThreshold',
+  'trackExpiry',
+  'amountDisplay',
+  'nutritionTarget',
   'customIngredients',
   'pantry',
   'customRecipes',
   'shoppingList',
+  'cookingLog',
 ];
 
 export function pickPersisted(store: AppStore): PersistedState {
@@ -183,6 +206,38 @@ export const useAppStore = create<AppStore>()(
 
       importState: (state) => set({ ...state, schemaVersion: CURRENT_SCHEMA_VERSION }),
       resetAll: () => set({ ...defaultPersistedState(get().language) }),
+
+      setTrackExpiry: (trackExpiry) => set({ trackExpiry }),
+      setAmountDisplay: (amountDisplay) => set({ amountDisplay }),
+      setNutritionTarget: (nutritionTarget) => set({ nutritionTarget }),
+
+      logCook: (entry) => {
+        const created: CookEntry = { ...entry, id: newId('cook') };
+        set((state) => ({ cookingLog: [...state.cookingLog, created] }));
+        return created;
+      },
+      deleteCookEntry: (id) => set((state) => ({ cookingLog: state.cookingLog.filter((e) => e.id !== id) })),
+
+      clearData: (selection) =>
+        set((state) => {
+          const defaults = defaultPersistedState(state.language);
+          return {
+            ...(selection.pantry ? { pantry: [] } : {}),
+            ...(selection.shoppingList ? { shoppingList: [] } : {}),
+            ...(selection.customRecipes ? { customRecipes: [] } : {}),
+            ...(selection.customIngredients ? { customIngredients: [] } : {}),
+            ...(selection.cookingLog ? { cookingLog: [] } : {}),
+            ...(selection.settings
+              ? {
+                  servings: defaults.servings,
+                  almostThreshold: defaults.almostThreshold,
+                  trackExpiry: defaults.trackExpiry,
+                  amountDisplay: defaults.amountDisplay,
+                  nutritionTarget: defaults.nutritionTarget,
+                }
+              : {}),
+          };
+        }),
     }),
     {
       name: STORAGE_KEY,

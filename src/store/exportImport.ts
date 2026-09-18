@@ -37,6 +37,15 @@ export function parseImportedState(json: string): PersistedState {
   assert(typeof version === 'number' && Number.isInteger(version) && version >= 1, 'invalid-version');
   assert(typeof raw.language === 'string' && LANGS.includes(raw.language), 'invalid-language');
   for (const key of ARRAY_KEYS) assert(Array.isArray(raw[key]), `invalid-${key}`);
+  // Version 1 files have no cooking log; treat a missing one as empty.
+  const cookingLog = raw.cookingLog ?? [];
+  assert(Array.isArray(cookingLog), 'invalid-cookingLog');
+  for (const item of cookingLog as unknown[]) {
+    assert(
+      isRecord(item) && typeof item.id === 'string' && typeof item.recipeId === 'string' && isRecord(item.recipeName),
+      'invalid-cook-entry',
+    );
+  }
   for (const item of raw.pantry as unknown[]) {
     assert(isRecord(item) && typeof item.ingredientId === 'string', 'invalid-pantry-item');
   }

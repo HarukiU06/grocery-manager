@@ -12,9 +12,9 @@ describe('pantry actions', () => {
   it('adds, updates, removes and dedupes pantry items', () => {
     const s = useAppStore.getState();
     s.addPantryItem('egg');
-    s.addPantryItem('egg', { quantity: '6' });
+    s.addPantryItem('egg', { quantity: { amount: 6, unit: 'pcs' } });
     expect(useAppStore.getState().pantry).toHaveLength(1);
-    expect(useAppStore.getState().pantry[0].quantity).toBe('6');
+    expect(useAppStore.getState().pantry[0].quantity).toEqual({ amount: 6, unit: 'pcs' });
     s.updatePantryItem('egg', { expiresOn: '2026-09-20', location: 'fridge' });
     expect(useAppStore.getState().pantry[0]).toMatchObject({ expiresOn: '2026-09-20', location: 'fridge' });
     s.removePantryItem('egg');
@@ -99,6 +99,53 @@ describe('settings and data', () => {
     expect(useAppStore.getState().pantry).toHaveLength(1);
     s.resetAll();
     expect(useAppStore.getState().pantry).toHaveLength(0);
+    expect(useAppStore.getState().language).toBe('ja');
+  });
+});
+
+describe('version 2 settings and cooking log', () => {
+  it('toggles the new settings', () => {
+    const s = useAppStore.getState();
+    s.setTrackExpiry(false);
+    expect(useAppStore.getState().trackExpiry).toBe(false);
+    s.setAmountDisplay('grams');
+    expect(useAppStore.getState().amountDisplay).toBe('grams');
+    s.setNutritionTarget('adult_female');
+    expect(useAppStore.getState().nutritionTarget).toBe('adult_female');
+  });
+  it('records and deletes cook entries', () => {
+    const s = useAppStore.getState();
+    const entry = s.logCook({
+      recipeId: 'teriyaki-chicken',
+      recipeName: { en: 'Teriyaki chicken' },
+      servings: 2,
+      cookedOn: '2026-09-19',
+    });
+    expect(entry.id.startsWith('cook-')).toBe(true);
+    expect(useAppStore.getState().cookingLog).toHaveLength(1);
+    s.deleteCookEntry(entry.id);
+    expect(useAppStore.getState().cookingLog).toHaveLength(0);
+  });
+  it('clears only the selected parts', () => {
+    const s = useAppStore.getState();
+    s.addPantryItem('egg');
+    s.addToShopping('milk');
+    s.setServings(6);
+    s.logCook({ recipeId: 'r', recipeName: { en: 'R' }, servings: 1, cookedOn: '2026-09-19' });
+    s.clearData({ pantry: true, cookingLog: true });
+    expect(useAppStore.getState().pantry).toHaveLength(0);
+    expect(useAppStore.getState().cookingLog).toHaveLength(0);
+    expect(useAppStore.getState().shoppingList).toHaveLength(1);
+    expect(useAppStore.getState().servings).toBe(6);
+  });
+  it('clearing settings restores defaults but keeps the language', () => {
+    const s = useAppStore.getState();
+    s.setLanguage('ja');
+    s.setServings(8);
+    s.setTrackExpiry(false);
+    s.clearData({ settings: true });
+    expect(useAppStore.getState().servings).toBe(2);
+    expect(useAppStore.getState().trackExpiry).toBe(true);
     expect(useAppStore.getState().language).toBe('ja');
   });
 });
