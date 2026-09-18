@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { makeRecipe } from '../test/factories';
 import { defaultPersistedState } from './migrations';
-import { STORAGE_KEY, useAppStore } from './useAppStore';
+import { STORAGE_KEY, useAppStore, type RecipeInput } from './useAppStore';
 
 beforeEach(() => {
   window.localStorage.clear();
@@ -43,8 +43,14 @@ describe('ingredients and recipes', () => {
   });
   it('adds, updates and deletes custom recipes', () => {
     const s = useAppStore.getState();
-    const base = makeRecipe({ name: { en: 'Mine' }, ingredients: [{ ingredientId: 'egg' }] });
-    const { id: _ignoredId, isPreset: _ignoredPreset, ...input } = base;
+    const input: RecipeInput = {
+      name: { en: 'Mine' },
+      cuisine: 'other',
+      category: 'main',
+      baseServings: 2,
+      ingredients: [{ ingredientId: 'egg' }],
+      steps: { en: ['Cook'] },
+    };
     const created = s.addCustomRecipe(input);
     expect(created.isPreset).toBe(false);
     s.updateCustomRecipe(created.id, { ...input, name: { en: 'Renamed' } });

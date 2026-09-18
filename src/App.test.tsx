@@ -1,10 +1,15 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { App } from './App';
+import { defaultPersistedState } from './store/migrations';
+import { useAppStore } from './store/useAppStore';
+
+beforeEach(() => useAppStore.setState(defaultPersistedState('en')));
 
 describe('App', () => {
-  it('renders the app name', () => {
+  it('renders the pantry page and navigation', () => {
     render(<App />);
-    expect(screen.getByText('Grocery Manager')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Pantry' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Settings' })).toBeInTheDocument();
   });
 });
