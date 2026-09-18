@@ -15,6 +15,7 @@ import type { RecipeIngredient } from '../../domain/types';
 import { toGrams } from '../../domain/units';
 import { useLang, useT } from '../../i18n';
 import { useIngredientName, usePantryIds, useRecipe } from '../../store/selectors';
+import { CookSheet } from './CookSheet';
 import { useAppStore } from '../../store/useAppStore';
 
 export function RecipeDetailPage() {
@@ -35,6 +36,7 @@ export function RecipeDetailPage() {
   const showToast = useToastStore((s) => s.show);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [wholeRecipe, setWholeRecipe] = useState(false);
+  const [cooking, setCooking] = useState(false);
 
   // Computed before the early return so the hook order never depends on the route parameter.
   const nutrition = useMemo(
@@ -169,6 +171,7 @@ export function RecipeDetailPage() {
       </section>
 
       <div className="flex flex-wrap gap-2">
+        <Button onClick={() => setCooking(true)}>{t('recipe.cooked')}</Button>
         {recipe.isPreset ? (
           <Button variant="secondary" onClick={duplicate}>
             {t('recipe.duplicate')}
@@ -188,6 +191,7 @@ export function RecipeDetailPage() {
         )}
       </div>
 
+      <CookSheet recipe={recipe} open={cooking} onClose={() => setCooking(false)} />
       <ConfirmDialog
         open={confirmingDelete}
         title={t('recipe.deleteConfirmTitle')}

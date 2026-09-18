@@ -191,6 +191,13 @@ export const ja: Record<TranslationKey, string> = {
   'unit.stalk': '本',
   'unit.pinch': 'つまみ',
 
+  'cook.title': '作ったものを記録',
+  'cook.removeFromPantry': '在庫から取り除く',
+  'cook.removeHint': 'チェックした材料は在庫から完全に取り除かれます。数量は減りません。',
+  'cook.nothingToRemove': 'この材料は在庫にありません。',
+  'cook.record': '記録する',
+  'cook.recorded': '記録しました',
+
   'shopping.title': '買い物リスト',
   'shopping.empty': '買い物リストは空です。',
   'shopping.searchPlaceholder': '買う食材を追加…',

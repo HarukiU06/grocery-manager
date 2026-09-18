@@ -189,6 +189,13 @@ export const en = {
   'unit.stalk': 'stalk',
   'unit.pinch': 'pinch',
 
+  'cook.title': 'Record what you cooked',
+  'cook.removeFromPantry': 'Remove from the pantry',
+  'cook.removeHint': 'Checked ingredients are removed from the pantry completely, not reduced.',
+  'cook.nothingToRemove': 'None of these ingredients are in your pantry.',
+  'cook.record': 'Record',
+  'cook.recorded': 'Recorded',
+
   'shopping.title': 'Shopping list',
   'shopping.empty': 'Your shopping list is empty.',
   'shopping.searchPlaceholder': 'Add an ingredient to buy…',
