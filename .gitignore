@@ -12,6 +12,9 @@ coverage/
 *.log
 npm-debug.log*
 
+# Claude Code runtime state (session-local, not project config)
+.claude/*.lock
+
 # Editor / OS
 .vscode/*
 !.vscode/extensions.json
