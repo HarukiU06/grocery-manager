@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { PageHeader } from '../../components/PageHeader';
 import {
@@ -48,8 +48,10 @@ export function RecipeFormPage() {
   const nameOf = useIngredientName();
   const addCustomRecipe = useAppStore((s) => s.addCustomRecipe);
   const updateCustomRecipe = useAppStore((s) => s.updateCustomRecipe);
+  const location = useLocation();
+  const prefill = (location.state as { draft?: RecipeDraft } | null)?.draft;
   const [draft, setDraft] = useState<RecipeDraft>(() =>
-    existing && !existing.isPreset ? draftFromRecipe(existing) : emptyDraft(),
+    existing && !existing.isPreset ? draftFromRecipe(existing) : (prefill ?? emptyDraft()),
   );
   const [errors, setErrors] = useState<RecipeDraftError[]>([]);
   const isEdit = Boolean(existing && !existing.isPreset);

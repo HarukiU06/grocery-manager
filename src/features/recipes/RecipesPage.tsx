@@ -38,12 +38,20 @@ export function RecipesPage() {
       <PageHeader
         title={t('recipes.title')}
         action={
-          <Link
-            to="/recipes/new"
-            className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
-          >
-            {t('recipes.new')}
-          </Link>
+          <span className="flex shrink-0 gap-2">
+            <Link
+              to="/recipes/import"
+              className="rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-800 hover:bg-stone-100"
+            >
+              {t('import.open')}
+            </Link>
+            <Link
+              to="/recipes/new"
+              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+            >
+              {t('recipes.new')}
+            </Link>
+          </span>
         }
       />
       <SearchInput value={query} onChange={setQuery} placeholder={t('recipes.searchPlaceholder')} />

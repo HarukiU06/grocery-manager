@@ -2,6 +2,7 @@ import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { LogPage } from './features/log/LogPage';
 import { PantryPage } from './features/pantry/PantryPage';
+import { ImportRecipePage } from './features/recipes/ImportRecipePage';
 import { RecipeDetailPage } from './features/recipes/RecipeDetailPage';
 import { RecipeFormPage } from './features/recipes/RecipeFormPage';
 import { RecipesPage } from './features/recipes/RecipesPage';
@@ -18,6 +19,7 @@ const router = createHashRouter([
       { path: 'suggestions', element: <SuggestionsPage /> },
       { path: 'recipes', element: <RecipesPage /> },
       { path: 'recipes/new', element: <RecipeFormPage /> },
+      { path: 'recipes/import', element: <ImportRecipePage /> },
       { path: 'recipes/:id', element: <RecipeDetailPage /> },
       { path: 'recipes/:id/edit', element: <RecipeFormPage /> },
       { path: 'shopping', element: <ShoppingPage /> },
