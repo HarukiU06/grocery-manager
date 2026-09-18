@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Button } from '../../components/Button';
 import { Sheet } from '../../components/Sheet';
-import { STORAGE_LOCATIONS, type PantryItem, type StorageLocation } from '../../domain/types';
+import { STORAGE_LOCATIONS, UNITS, type PantryItem, type StorageLocation, type Unit } from '../../domain/types';
 import { useT } from '../../i18n';
 import { useIngredientName } from '../../store/selectors';
 import { useAppStore } from '../../store/useAppStore';
@@ -29,14 +29,20 @@ function PantryItemForm({ item, onClose }: { item: PantryItem; onClose: () => vo
   const nameOf = useIngredientName();
   const updatePantryItem = useAppStore((s) => s.updatePantryItem);
   const removePantryItem = useAppStore((s) => s.removePantryItem);
-  const [quantity, setQuantity] = useState(item.quantity ? String(item.quantity.amount) : '');
+  const [amount, setAmount] = useState(item.quantity ? String(item.quantity.amount) : '');
+  const [unit, setUnit] = useState<Unit>(item.quantity?.unit ?? 'g');
+  const [note, setNote] = useState(item.note ?? '');
   const [expiresOn, setExpiresOn] = useState(item.expiresOn ?? '');
   const [location, setLocation] = useState<StorageLocation | ''>(item.location ?? '');
 
   const save = (event: FormEvent) => {
     event.preventDefault();
+    const parsedAmount = Number(amount);
+    const quantity =
+      amount.trim() && Number.isFinite(parsedAmount) && parsedAmount > 0 ? { amount: parsedAmount, unit } : undefined;
     updatePantryItem(item.ingredientId, {
-      quantity: quantity.trim() ? { amount: Number(quantity), unit: 'g' as const } : undefined,
+      quantity,
+      note: note.trim() || undefined,
       expiresOn: expiresOn || undefined,
       location: location || undefined,
     });
@@ -52,13 +58,36 @@ function PantryItemForm({ item, onClose }: { item: PantryItem; onClose: () => vo
     <>
       <p className="mb-3 text-base font-semibold">{nameOf(item.ingredientId)}</p>
       <form onSubmit={save} className="flex flex-col gap-3">
+        <div className="grid grid-cols-2 gap-2">
+          <label className="text-sm">
+            <span className="mb-1 block text-stone-600">{t('pantry.amount')}</span>
+            <input
+              className={inputClass}
+              type="number"
+              min={0}
+              step="any"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </label>
+          <label className="text-sm">
+            <span className="mb-1 block text-stone-600">{t('pantry.unit')}</span>
+            <select className={inputClass} value={unit} onChange={(e) => setUnit(e.target.value as Unit)}>
+              {UNITS.map((u) => (
+                <option key={u} value={u}>
+                  {t(`unit.${u}`)}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <label className="text-sm">
-          <span className="mb-1 block text-stone-600">{t('pantry.quantity')}</span>
+          <span className="mb-1 block text-stone-600">{t('pantry.note')}</span>
           <input
             className={inputClass}
-            value={quantity}
-            placeholder={t('pantry.quantityPlaceholder')}
-            onChange={(e) => setQuantity(e.target.value)}
+            value={note}
+            placeholder={t('pantry.notePlaceholder')}
+            onChange={(e) => setNote(e.target.value)}
           />
         </label>
         <label className="text-sm">
