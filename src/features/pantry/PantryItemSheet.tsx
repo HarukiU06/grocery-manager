@@ -1,7 +1,7 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Button } from '../../components/Button';
 import { Sheet } from '../../components/Sheet';
-import { STORAGE_LOCATIONS, type StorageLocation } from '../../domain/types';
+import { STORAGE_LOCATIONS, type PantryItem, type StorageLocation } from '../../domain/types';
 import { useT } from '../../i18n';
 import { useIngredientName } from '../../store/selectors';
 import { useAppStore } from '../../store/useAppStore';
@@ -15,25 +15,27 @@ const inputClass = 'w-full rounded-lg border border-stone-300 px-3 py-2 text-bas
 
 export function PantryItemSheet({ ingredientId, onClose }: Props) {
   const t = useT();
-  const nameOf = useIngredientName();
   const item = useAppStore((s) => s.pantry.find((p) => p.ingredientId === ingredientId));
+  return (
+    <Sheet open={item !== undefined} onClose={onClose} title={t('pantry.editItem')}>
+      {/* Keyed so the form remounts with fresh state for each item. */}
+      {item && <PantryItemForm key={item.ingredientId} item={item} onClose={onClose} />}
+    </Sheet>
+  );
+}
+
+function PantryItemForm({ item, onClose }: { item: PantryItem; onClose: () => void }) {
+  const t = useT();
+  const nameOf = useIngredientName();
   const updatePantryItem = useAppStore((s) => s.updatePantryItem);
   const removePantryItem = useAppStore((s) => s.removePantryItem);
-  const [quantity, setQuantity] = useState('');
-  const [expiresOn, setExpiresOn] = useState('');
-  const [location, setLocation] = useState<StorageLocation | ''>('');
-
-  useEffect(() => {
-    setQuantity(item?.quantity ?? '');
-    setExpiresOn(item?.expiresOn ?? '');
-    setLocation(item?.location ?? '');
-  }, [item]);
-
-  if (!ingredientId) return null;
+  const [quantity, setQuantity] = useState(item.quantity ?? '');
+  const [expiresOn, setExpiresOn] = useState(item.expiresOn ?? '');
+  const [location, setLocation] = useState<StorageLocation | ''>(item.location ?? '');
 
   const save = (event: FormEvent) => {
     event.preventDefault();
-    updatePantryItem(ingredientId, {
+    updatePantryItem(item.ingredientId, {
       quantity: quantity.trim() || undefined,
       expiresOn: expiresOn || undefined,
       location: location || undefined,
@@ -42,13 +44,13 @@ export function PantryItemSheet({ ingredientId, onClose }: Props) {
   };
 
   const remove = () => {
-    removePantryItem(ingredientId);
+    removePantryItem(item.ingredientId);
     onClose();
   };
 
   return (
-    <Sheet open={item !== undefined} onClose={onClose} title={t('pantry.editItem')}>
-      <p className="mb-3 text-base font-semibold">{nameOf(ingredientId)}</p>
+    <>
+      <p className="mb-3 text-base font-semibold">{nameOf(item.ingredientId)}</p>
       <form onSubmit={save} className="flex flex-col gap-3">
         <label className="text-sm">
           <span className="mb-1 block text-stone-600">{t('pantry.quantity')}</span>
@@ -90,6 +92,6 @@ export function PantryItemSheet({ ingredientId, onClose }: Props) {
           </div>
         </div>
       </form>
-    </Sheet>
+    </>
   );
 }
