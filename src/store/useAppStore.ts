@@ -105,7 +105,7 @@ export const useAppStore = create<AppStore>()(
 
       setLanguage: (language) => set({ language }),
       setServings: (servings) => set({ servings: clamp(Math.round(servings), 1, 12) }),
-      setAlmostThreshold: (threshold) => set({ almostThreshold: clamp(Math.round(threshold), 1, 3) }),
+      setAlmostThreshold: (threshold) => set({ almostThreshold: clamp(Math.round(threshold), 1, 5) }),
 
       addPantryItem: (ingredientId, fields = {}) =>
         set((state) => {

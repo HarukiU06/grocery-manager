@@ -90,7 +90,7 @@ describe('settings and data', () => {
     s.setServings(50);
     expect(useAppStore.getState().servings).toBe(12);
     s.setAlmostThreshold(9);
-    expect(useAppStore.getState().almostThreshold).toBe(3);
+    expect(useAppStore.getState().almostThreshold).toBe(5);
   });
   it('imports and resets while keeping the language', () => {
     const s = useAppStore.getState();

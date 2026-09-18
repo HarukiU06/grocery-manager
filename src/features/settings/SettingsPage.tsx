@@ -13,7 +13,7 @@ import { pickPersisted, useAppStore } from '../../store/useAppStore';
 
 const APP_VERSION = '0.1.0';
 const LANGS: Lang[] = ['ja', 'en'];
-const THRESHOLDS = [1, 2, 3];
+const THRESHOLDS = [1, 2, 3, 4, 5];
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (

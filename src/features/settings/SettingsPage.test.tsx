@@ -16,8 +16,8 @@ describe('SettingsPage', () => {
     await userEvent.click(screen.getByRole('button', { name: '日本語' }));
     expect(useAppStore.getState().language).toBe('ja');
     expect(screen.getByRole('heading', { name: '設定' })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: '3' }));
-    expect(useAppStore.getState().almostThreshold).toBe(3);
+    await userEvent.click(screen.getByRole('button', { name: '5' }));
+    expect(useAppStore.getState().almostThreshold).toBe(5);
   });
   it('exports a JSON file', async () => {
     const spy = vi.spyOn(exportImport, 'downloadTextFile').mockImplementation(() => {});

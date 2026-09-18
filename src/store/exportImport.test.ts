@@ -19,6 +19,8 @@ describe('export/import', () => {
     const parsed = parseImportedState(JSON.stringify({ ...defaultPersistedState(), servings: 99, almostThreshold: 0 }));
     expect(parsed.servings).toBe(12);
     expect(parsed.almostThreshold).toBe(1);
+    const parsedHigh = parseImportedState(JSON.stringify({ ...defaultPersistedState(), almostThreshold: 99 }));
+    expect(parsedHigh.almostThreshold).toBe(5);
   });
   it('builds a dated filename', () => {
     expect(exportFilename('2026-09-18')).toBe('grocery-manager-2026-09-18.json');

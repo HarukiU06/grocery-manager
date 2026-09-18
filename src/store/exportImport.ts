@@ -59,7 +59,7 @@ export function parseImportedState(json: string): PersistedState {
   return {
     ...migrated,
     servings: clamp(numberOr(migrated.servings, 2), 1, 12),
-    almostThreshold: clamp(numberOr(migrated.almostThreshold, 2), 1, 3),
+    almostThreshold: clamp(numberOr(migrated.almostThreshold, 2), 1, 5),
   };
 }
 
