@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { CUISINES, RECIPE_CATEGORIES, UNITS } from '../domain/types';
 import { toGrams } from '../domain/units';
+import { NUTRIENT_KEYS } from '../domain/types';
 import { CONVERSIONS } from './conversions';
-import { PRESET_INGREDIENT_IDS } from './ingredients';
+import { ALCOHOL_INGREDIENT_IDS, NUTRITION } from './nutrition';
+import { PRESET_INGREDIENT_IDS, PRESET_INGREDIENTS } from './ingredients';
 import { PRESET_RECIPES } from './recipes';
 
 describe('preset recipes', () => {
@@ -90,6 +92,45 @@ describe('conversions', () => {
         expect(c.densityGPerMl, id).toBeGreaterThan(0);
         expect(c.densityGPerMl, id).toBeLessThanOrEqual(2);
       }
+    }
+  });
+});
+
+describe('nutrition data', () => {
+  it('covers every preset ingredient exactly once', () => {
+    for (const ing of PRESET_INGREDIENTS) {
+      expect(NUTRITION[ing.id], `missing nutrition for ${ing.id}`).toBeDefined();
+    }
+    for (const id of Object.keys(NUTRITION)) {
+      expect(PRESET_INGREDIENT_IDS.has(id), id).toBe(true);
+    }
+  });
+  it('has 14 finite, non-negative values per row', () => {
+    for (const [id, row] of Object.entries(NUTRITION)) {
+      expect(row, id).toHaveLength(NUTRIENT_KEYS.length);
+      for (const value of row) {
+        expect(Number.isFinite(value), id).toBe(true);
+        expect(value, id).toBeGreaterThanOrEqual(0);
+      }
+    }
+  });
+  it('keeps energy consistent with the macronutrients', () => {
+    for (const [id, row] of Object.entries(NUTRITION)) {
+      if (ALCOHOL_INGREDIENT_IDS.has(id)) continue;
+      const [energy, protein, fat, carbs, fiber] = row;
+      // Available carbohydrate yields 4 kcal per gram, fibre roughly 2.
+      const available = Math.max(0, carbs - fiber);
+      const estimate = protein * 4 + fat * 9 + available * 4 + fiber * 2;
+      const tolerance = Math.max(30, estimate * 0.35);
+      expect(Math.abs(energy - estimate), `${id}: ${energy} vs ${estimate.toFixed(1)}`).toBeLessThanOrEqual(tolerance);
+    }
+  });
+  it('keeps every value inside a plausible range', () => {
+    const max = [900, 100, 100, 100, 80, 100, 2500, 60, 7000, 15000, 5, 5, 500, 60];
+    for (const [id, row] of Object.entries(NUTRITION)) {
+      row.forEach((value, index) => {
+        expect(value, `${id} index ${index}`).toBeLessThanOrEqual(max[index]);
+      });
     }
   });
 });
