@@ -39,4 +39,17 @@ describe('SuggestionsPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Western' }));
     expect(screen.queryByText('Tamagoyaki (rolled omelette)')).not.toBeInTheDocument();
   });
+  it('filters recipes down to those using every selected ingredient', async () => {
+    stock('egg', 'sugar', 'soy-sauce', 'dashi-granules', 'cooking-oil', 'rice', 'chicken-thigh', 'onion');
+    renderWithRouter(<SuggestionsPage />);
+    expect(screen.getByText('Tamagoyaki (rolled omelette)')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Filter by ingredient' }));
+    const sheet = screen.getByRole('dialog', { name: 'Cook with these' });
+    await userEvent.click(within(sheet).getByRole('checkbox', { name: 'Chicken thigh' }));
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Apply' }));
+    expect(screen.queryByText('Tamagoyaki (rolled omelette)')).not.toBeInTheDocument();
+    expect(screen.getByText('Oyakodon (chicken and egg rice bowl)')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Remove Chicken thigh' }));
+    expect(screen.getByText('Tamagoyaki (rolled omelette)')).toBeInTheDocument();
+  });
 });

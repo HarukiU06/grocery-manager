@@ -85,6 +85,14 @@ export const ja: Record<TranslationKey, string> = {
   'suggestions.usesExpiring': '期限が近い食材を使う',
   'suggestions.filterAll': 'すべて',
 
+  'filter.byIngredient': '食材で絞り込む',
+  'filter.title': 'この食材を使う',
+  'filter.fromPantry': '在庫にあるもの',
+  'filter.other': 'その他の食材',
+  'filter.clear': 'クリア',
+  'filter.apply': '決定',
+  'filter.remove': '{name}を外す',
+
   'cuisine.japanese': '和食',
   'cuisine.western': '洋食',
   'cuisine.chinese': '中華',

@@ -1,30 +1,36 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../../components/Badge';
+import { Button } from '../../components/Button';
 import { Chip } from '../../components/Chip';
+import { IngredientFilterSheet, recipeUsesAll } from '../../components/IngredientFilterSheet';
 import { PageHeader } from '../../components/PageHeader';
 import { SearchInput } from '../../components/SearchInput';
 import { localize } from '../../domain/localize';
 import { normalizeForSearch } from '../../domain/search';
 import { CUISINES, type Cuisine } from '../../domain/types';
 import { useLang, useT } from '../../i18n';
-import { useAllRecipes } from '../../store/selectors';
+import { useAllRecipes, useIngredientName } from '../../store/selectors';
 
 export function RecipesPage() {
   const t = useT();
   const lang = useLang();
   const recipes = useAllRecipes();
+  const nameOf = useIngredientName();
   const [query, setQuery] = useState('');
   const [cuisine, setCuisine] = useState<Cuisine | 'all'>('all');
+  const [filterIds, setFilterIds] = useState<string[]>([]);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const visible = useMemo(() => {
     const q = normalizeForSearch(query);
     return recipes.filter((recipe) => {
       if (cuisine !== 'all' && recipe.cuisine !== cuisine) return false;
+      if (!recipeUsesAll(recipe, filterIds)) return false;
       if (!q) return true;
       return [recipe.name.ja, recipe.name.en].some((name) => name && normalizeForSearch(name).includes(q));
     });
-  }, [recipes, query, cuisine]);
+  }, [recipes, query, cuisine, filterIds]);
 
   return (
     <div className="p-4">
@@ -50,6 +56,29 @@ export function RecipesPage() {
           </Chip>
         ))}
       </div>
+
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <Button variant="secondary" size="sm" onClick={() => setFilterOpen(true)}>
+          {t('filter.byIngredient')}
+        </Button>
+        {filterIds.map((id) => (
+          <button
+            key={id}
+            type="button"
+            aria-label={t('filter.remove', { name: nameOf(id) })}
+            onClick={() => setFilterIds((ids) => ids.filter((x) => x !== id))}
+            className="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-800"
+          >
+            {nameOf(id)} ✕
+          </button>
+        ))}
+      </div>
+      <IngredientFilterSheet
+        open={filterOpen}
+        selected={filterIds}
+        onChange={setFilterIds}
+        onClose={() => setFilterOpen(false)}
+      />
       {visible.length === 0 ? (
         <p className="text-sm text-stone-500">{t('recipes.empty')}</p>
       ) : (

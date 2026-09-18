@@ -83,6 +83,14 @@ export const en = {
   'suggestions.usesExpiring': 'Uses expiring items',
   'suggestions.filterAll': 'All',
 
+  'filter.byIngredient': 'Filter by ingredient',
+  'filter.title': 'Cook with these',
+  'filter.fromPantry': 'In your pantry',
+  'filter.other': 'Other ingredients',
+  'filter.clear': 'Clear',
+  'filter.apply': 'Apply',
+  'filter.remove': 'Remove {name}',
+
   'cuisine.japanese': 'Japanese',
   'cuisine.western': 'Western',
   'cuisine.chinese': 'Chinese',
