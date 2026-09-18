@@ -25,6 +25,12 @@ describe('evaluateRecipe', () => {
     expect(match.status).toBe('far');
     expect(match.missingRequired).toEqual(['a', 'b', 'c']);
   });
+  it('ignores expiry when considerExpiry is false', () => {
+    const recipe = makeRecipe({ ingredients: [req('milk')] });
+    const pantry = [makePantryItem('milk', { expiresOn: '2026-09-19' })];
+    expect(evaluateRecipe(recipe, pantry, options).usesExpiring).toEqual(['milk']);
+    expect(evaluateRecipe(recipe, pantry, { ...options, considerExpiry: false }).usesExpiring).toEqual([]);
+  });
   it('lists pantry items expiring within 3 days that the recipe uses', () => {
     const recipe = makeRecipe({ ingredients: [req('milk'), req('egg'), req('flour')] });
     const pantry = [

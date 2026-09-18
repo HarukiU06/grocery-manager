@@ -16,6 +16,8 @@ export const en = {
   'common.confirm': 'Confirm',
   'common.back': 'Back',
   'common.optional': 'optional',
+  'common.on': 'On',
+  'common.off': 'Off',
   'common.unknownIngredient': '?',
 
   'servings.label': '{count} servings',
@@ -171,6 +173,8 @@ export const en = {
   'settings.title': 'Settings',
   'settings.language': 'Language',
   'settings.servings': 'Servings',
+  'settings.trackExpiry': 'Track best-before dates',
+  'settings.trackExpiryHint': 'Turn this off to hide the date field and its badges. Dates you already entered are kept.',
   'settings.almostThreshold': '"Almost there" threshold',
   'settings.almostThresholdHint': 'Show recipes missing up to this many ingredients.',
   'settings.data': 'Data',

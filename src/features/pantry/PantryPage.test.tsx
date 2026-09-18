@@ -51,4 +51,12 @@ describe('PantryPage', () => {
     await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Remove' }));
     expect(useAppStore.getState().pantry).toHaveLength(0);
   });
+  it('hides the expiry field and badge when tracking is off', async () => {
+    useAppStore.getState().addPantryItem('milk', { expiresOn: '2020-01-01' });
+    useAppStore.getState().setTrackExpiry(false);
+    renderWithRouter(<PantryPage />);
+    expect(screen.queryByText('Expired')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Milk' }));
+    expect(within(screen.getByRole('dialog')).queryByLabelText('Best before')).not.toBeInTheDocument();
+  });
 });

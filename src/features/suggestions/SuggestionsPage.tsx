@@ -31,6 +31,7 @@ export function SuggestionsPage() {
   const servings = useAppStore((s) => s.servings);
   const setServings = useAppStore((s) => s.setServings);
   const almostThreshold = useAppStore((s) => s.almostThreshold);
+  const trackExpiry = useAppStore((s) => s.trackExpiry);
   const addToShopping = useAppStore((s) => s.addToShopping);
   const showToast = useToastStore((s) => s.show);
   const nameOf = useIngredientName();
@@ -43,8 +44,8 @@ export function SuggestionsPage() {
     const filtered = recipes
       .filter((r) => cuisine === 'all' || r.cuisine === cuisine)
       .filter((r) => recipeUsesAll(r, filterIds));
-    return buildSuggestions(filtered, pantry, { almostThreshold, today });
-  }, [recipes, pantry, almostThreshold, cuisine, filterIds, today]);
+    return buildSuggestions(filtered, pantry, { almostThreshold, today, considerExpiry: trackExpiry });
+  }, [recipes, pantry, almostThreshold, cuisine, filterIds, today, trackExpiry]);
 
   const handleAdd = (ingredientId: string) => {
     addToShopping(ingredientId);

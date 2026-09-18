@@ -18,6 +18,8 @@ export const ja: Record<TranslationKey, string> = {
   'common.confirm': '確認',
   'common.back': '戻る',
   'common.optional': '任意',
+  'common.on': 'オン',
+  'common.off': 'オフ',
   'common.unknownIngredient': '?',
 
   'servings.label': '{count}人分',
@@ -173,6 +175,8 @@ export const ja: Record<TranslationKey, string> = {
   'settings.title': '設定',
   'settings.language': '言語',
   'settings.servings': '人数',
+  'settings.trackExpiry': '賞味期限を管理する',
+  'settings.trackExpiryHint': 'オフにすると入力欄とバッジを隠します。入力済みの日付は残ります。',
   'settings.almostThreshold': '「あと少し」の基準',
   'settings.almostThresholdHint': '不足がこの品数までのレシピを「あと少し」に表示します。',
   'settings.data': 'データ',

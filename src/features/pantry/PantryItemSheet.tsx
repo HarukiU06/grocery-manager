@@ -27,6 +27,7 @@ export function PantryItemSheet({ ingredientId, onClose }: Props) {
 function PantryItemForm({ item, onClose }: { item: PantryItem; onClose: () => void }) {
   const t = useT();
   const nameOf = useIngredientName();
+  const trackExpiry = useAppStore((s) => s.trackExpiry);
   const updatePantryItem = useAppStore((s) => s.updatePantryItem);
   const removePantryItem = useAppStore((s) => s.removePantryItem);
   const [amount, setAmount] = useState(item.quantity ? String(item.quantity.amount) : '');
@@ -43,7 +44,7 @@ function PantryItemForm({ item, onClose }: { item: PantryItem; onClose: () => vo
     updatePantryItem(item.ingredientId, {
       quantity,
       note: note.trim() || undefined,
-      expiresOn: expiresOn || undefined,
+      expiresOn: trackExpiry ? expiresOn || undefined : item.expiresOn,
       location: location || undefined,
     });
     onClose();
@@ -90,10 +91,12 @@ function PantryItemForm({ item, onClose }: { item: PantryItem; onClose: () => vo
             onChange={(e) => setNote(e.target.value)}
           />
         </label>
-        <label className="text-sm">
-          <span className="mb-1 block text-stone-600">{t('pantry.expiresOn')}</span>
-          <input className={inputClass} type="date" value={expiresOn} onChange={(e) => setExpiresOn(e.target.value)} />
-        </label>
+        {trackExpiry && (
+          <label className="text-sm">
+            <span className="mb-1 block text-stone-600">{t('pantry.expiresOn')}</span>
+            <input className={inputClass} type="date" value={expiresOn} onChange={(e) => setExpiresOn(e.target.value)} />
+          </label>
+        )}
         <label className="text-sm">
           <span className="mb-1 block text-stone-600">{t('pantry.location')}</span>
           <select

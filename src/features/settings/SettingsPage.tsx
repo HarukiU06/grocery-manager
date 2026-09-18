@@ -30,6 +30,8 @@ export function SettingsPage() {
   const setLanguage = useAppStore((s) => s.setLanguage);
   const servings = useAppStore((s) => s.servings);
   const setServings = useAppStore((s) => s.setServings);
+  const trackExpiry = useAppStore((s) => s.trackExpiry);
+  const setTrackExpiry = useAppStore((s) => s.setTrackExpiry);
   const almostThreshold = useAppStore((s) => s.almostThreshold);
   const setAlmostThreshold = useAppStore((s) => s.setAlmostThreshold);
   const importState = useAppStore((s) => s.importState);
@@ -76,6 +78,20 @@ export function SettingsPage() {
 
       <Section title={t('settings.servings')}>
         <ServingsStepper value={servings} onChange={setServings} />
+      </Section>
+
+      <Section title={t('settings.trackExpiry')}>
+        <p className="text-xs text-stone-500">{t('settings.trackExpiryHint')}</p>
+        <label className="flex items-center gap-3 text-sm">
+          <input
+            type="checkbox"
+            className="h-5 w-5 accent-emerald-600"
+            checked={trackExpiry}
+            onChange={(e) => setTrackExpiry(e.target.checked)}
+            aria-label={t('settings.trackExpiry')}
+          />
+          <span>{trackExpiry ? t('common.on') : t('common.off')}</span>
+        </label>
       </Section>
 
       <Section title={t('settings.almostThreshold')}>

@@ -20,6 +20,8 @@ export interface BuyToUnlock {
 export interface SuggestionOptions {
   almostThreshold: number;
   today: string;
+  /** When false, expiring pantry items never influence the result. */
+  considerExpiry?: boolean;
 }
 
 export interface Suggestions {
@@ -47,7 +49,9 @@ export function evaluateRecipe(
       (ri.optional ? missingOptional : missingRequired).push(ri.ingredientId);
       continue;
     }
-    if (expiryStatus(item.expiresOn, options.today) !== 'ok') usesExpiring.push(ri.ingredientId);
+    if (options.considerExpiry !== false && expiryStatus(item.expiresOn, options.today) !== 'ok') {
+      usesExpiring.push(ri.ingredientId);
+    }
   }
   const status: RecipeStatus =
     missingRequired.length === 0 ? 'ready' : missingRequired.length <= options.almostThreshold ? 'almost' : 'far';

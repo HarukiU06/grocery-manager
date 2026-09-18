@@ -3,6 +3,7 @@ import { daysUntil, expiryStatus } from '../../domain/dates';
 import { localize } from '../../domain/localize';
 import { formatQuantity } from '../../domain/scaling';
 import { useLang, useT } from '../../i18n';
+import { useAppStore } from '../../store/useAppStore';
 import type { PantryRow } from './groupPantry';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 export function PantryItemRow({ row, today, onSelect }: Props) {
   const t = useT();
   const lang = useLang();
+  const trackExpiry = useAppStore((s) => s.trackExpiry);
   const { item, ingredient } = row;
   const name = ingredient ? localize(ingredient.name, lang) : t('common.unknownIngredient');
   const status = expiryStatus(item.expiresOn, today);
@@ -36,8 +38,8 @@ export function PantryItemRow({ row, today, onSelect }: Props) {
         </span>
         <span className="flex shrink-0 items-center gap-1">
           {item.location && <Badge tone="blue">{t(`location.${item.location}`)}</Badge>}
-          {status === 'expired' && <Badge tone="red">{t('pantry.expired')}</Badge>}
-          {status === 'soon' && days !== null && (
+          {trackExpiry && status === 'expired' && <Badge tone="red">{t('pantry.expired')}</Badge>}
+          {trackExpiry && status === 'soon' && days !== null && (
             <Badge tone="amber">{days === 0 ? t('pantry.expiresToday') : t('pantry.expiresIn', { days })}</Badge>
           )}
         </span>
