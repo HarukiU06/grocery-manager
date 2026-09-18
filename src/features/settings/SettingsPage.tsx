@@ -10,6 +10,7 @@ import type { Lang, PersistedState } from '../../domain/types';
 import { useT } from '../../i18n';
 import { downloadTextFile, exportFilename, parseImportedState, serializeState } from '../../store/exportImport';
 import { pickPersisted, useAppStore } from '../../store/useAppStore';
+import { ClearDataSheet } from './ClearDataSheet';
 
 const APP_VERSION = '0.1.0';
 const LANGS: Lang[] = ['ja', 'en'];
@@ -35,11 +36,10 @@ export function SettingsPage() {
   const almostThreshold = useAppStore((s) => s.almostThreshold);
   const setAlmostThreshold = useAppStore((s) => s.setAlmostThreshold);
   const importState = useAppStore((s) => s.importState);
-  const resetAll = useAppStore((s) => s.resetAll);
   const showToast = useToastStore((s) => s.show);
   const fileInput = useRef<HTMLInputElement>(null);
   const [pendingImport, setPendingImport] = useState<PersistedState | null>(null);
-  const [confirmingReset, setConfirmingReset] = useState(false);
+  const [clearOpen, setClearOpen] = useState(false);
 
   const exportData = () => {
     downloadTextFile(exportFilename(todayIso()), serializeState(pickPersisted(useAppStore.getState())));
@@ -121,8 +121,8 @@ export function SettingsPage() {
             className="sr-only"
             onChange={onFileChosen}
           />
-          <Button variant="danger" onClick={() => setConfirmingReset(true)}>
-            {t('settings.reset')}
+          <Button variant="danger" onClick={() => setClearOpen(true)}>
+            {t('clear.open')}
           </Button>
         </div>
       </Section>
@@ -141,18 +141,7 @@ export function SettingsPage() {
         onConfirm={confirmImport}
         onCancel={() => setPendingImport(null)}
       />
-      <ConfirmDialog
-        open={confirmingReset}
-        title={t('settings.resetConfirmTitle')}
-        body={t('settings.resetConfirmBody')}
-        confirmLabel={t('settings.reset')}
-        danger
-        onConfirm={() => {
-          resetAll();
-          setConfirmingReset(false);
-        }}
-        onCancel={() => setConfirmingReset(false)}
-      />
+      <ClearDataSheet open={clearOpen} onClose={() => setClearOpen(false)} />
     </div>
   );
 }

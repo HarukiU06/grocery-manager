@@ -46,11 +46,19 @@ describe('SettingsPage', () => {
     await waitFor(() => expect(useToastStore.getState().message).toBe('Could not import this file.'));
     expect(useAppStore.getState().pantry).toHaveLength(1);
   });
-  it('resets data after confirmation', async () => {
-    useAppStore.getState().addPantryItem('egg');
+  it('deletes only the selected parts', async () => {
+    const s = useAppStore.getState();
+    s.addPantryItem('egg');
+    s.addToShopping('milk');
     renderWithRouter(<SettingsPage />);
-    await userEvent.click(screen.getByRole('button', { name: 'Reset all data' }));
-    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Reset all data' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Delete data' }));
+    const sheet = screen.getByRole('dialog', { name: 'Delete data' });
+    await userEvent.click(within(sheet).getByRole('checkbox', { name: 'Pantry' }));
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Delete data' }));
+    await userEvent.click(
+      within(screen.getByRole('dialog', { name: 'Delete the selected data?' })).getByRole('button', { name: 'Confirm' }),
+    );
     expect(useAppStore.getState().pantry).toHaveLength(0);
+    expect(useAppStore.getState().shoppingList).toHaveLength(1);
   });
 });
