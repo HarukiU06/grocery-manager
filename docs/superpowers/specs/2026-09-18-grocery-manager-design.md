@@ -28,10 +28,10 @@ any number of servings.
 
 ## 3. Tech stack
 
-- **React 18 + TypeScript (strict)** on **Vite**.
+- **React 19 + TypeScript (strict)** on **Vite**.
 - **Tailwind CSS v4** via the `@tailwindcss/vite` plugin (no PostCSS config).
 - **Zustand v5** with the `persist` middleware for state and localStorage persistence.
-- **react-router-dom v7** (library mode) so each tab has a URL and the mobile back button works.
+- **react-router-dom v7** (library mode, hash router) so each tab has a URL, the mobile back button works, and the built app runs on any static host without rewrite rules.
 - **Vitest + @testing-library/react + jsdom** for tests. ESLint from the Vite template.
 - No component library. Mobile-first layout; on wide screens the app is centered at a max width.
 
@@ -182,7 +182,7 @@ export function buildSuggestions(recipes, pantry, options): {
 - Sorting:
   - `ready`: `usesExpiring.length` desc, then `timeMinutes` asc (undefined last), then English name asc (stable regardless of UI language; the UI does not re-sort).
   - `almost`: `missingRequired.length` asc, then `usesExpiring.length` desc, then English name.
-  - `buyToUnlock`: `unlocks.length` desc, then `helps.length` desc, then ingredient English name asc. Ingredients with zero unlocks and zero helps never appear.
+  - `buyToUnlock`: `unlocks.length` desc, then `helps.length` desc, then ingredient ID asc (preset IDs are English slugs). Ingredients with zero unlocks and zero helps never appear.
 - `far` recipes are not shown on the Suggestions page; they are visible in the Recipes tab.
 
 ## 7. Servings scaling (`src/domain/scaling.ts`)
