@@ -21,7 +21,8 @@ describe('IngredientPicker', () => {
       <IngredientPicker onPick={vi.fn()} placeholder="Search" disabledIds={new Set(['onion'])} disabledLabel="In pantry" />,
     );
     await userEvent.type(screen.getByRole('searchbox'), 'onion');
-    expect(screen.getByRole('button', { name: /Onion.*In pantry/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Onion' })).toBeDisabled();
+    expect(screen.getByText('In pantry')).toBeInTheDocument();
   });
   it('creates a new ingredient when there is no exact match', async () => {
     const onPick = vi.fn();

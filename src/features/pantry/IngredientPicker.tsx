@@ -52,6 +52,7 @@ export function IngredientPicker({
                 <button
                   type="button"
                   disabled={disabled}
+                  aria-label={localize(ingredient.name, lang)}
                   onClick={() => pick(ingredient.id)}
                   className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm hover:bg-stone-50 disabled:cursor-default disabled:text-stone-400"
                 >
