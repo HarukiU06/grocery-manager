@@ -1,19 +1,11 @@
 import { useMemo, useState } from 'react';
 import { expiryStatus, todayIso } from '../domain/dates';
-import type { Recipe } from '../domain/types';
 import { IngredientPicker } from '../features/pantry/IngredientPicker';
 import { useLang, useT } from '../i18n';
 import { useIngredientName } from '../store/selectors';
 import { useAppStore } from '../store/useAppStore';
 import { Button } from './Button';
 import { Sheet } from './Sheet';
-
-/** A recipe passes the filter when it lists every selected ingredient, optional ones included. */
-export function recipeUsesAll(recipe: Recipe, ids: string[]): boolean {
-  if (ids.length === 0) return true;
-  const used = new Set(recipe.ingredients.map((ri) => ri.ingredientId));
-  return ids.every((id) => used.has(id));
-}
 
 interface Props {
   open: boolean;

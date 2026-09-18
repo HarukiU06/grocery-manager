@@ -1,11 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Button } from '../../components/Button';
 import { Chip } from '../../components/Chip';
-import { IngredientFilterSheet, recipeUsesAll } from '../../components/IngredientFilterSheet';
+import { IngredientFilterSheet } from '../../components/IngredientFilterSheet';
 import { PageHeader } from '../../components/PageHeader';
 import { ServingsStepper } from '../../components/ServingsStepper';
 import { useToastStore } from '../../components/toastStore';
 import { todayIso } from '../../domain/dates';
+import { recipeUsesAll } from '../../domain/recipeFilter';
 import { buildSuggestions } from '../../domain/matching';
 import { CUISINES, type Cuisine } from '../../domain/types';
 import { useT } from '../../i18n';
