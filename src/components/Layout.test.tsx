@@ -15,6 +15,7 @@ describe('Layout', () => {
     expect(screen.getByRole('link', { name: 'Cook' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Recipes' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Shopping' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Log' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Settings' })).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('en');
     useAppStore.getState().setLanguage('ja');

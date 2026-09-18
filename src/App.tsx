@@ -1,5 +1,6 @@
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { Layout } from './components/Layout';
+import { LogPage } from './features/log/LogPage';
 import { PantryPage } from './features/pantry/PantryPage';
 import { RecipeDetailPage } from './features/recipes/RecipeDetailPage';
 import { RecipeFormPage } from './features/recipes/RecipeFormPage';
@@ -20,6 +21,7 @@ const router = createHashRouter([
       { path: 'recipes/:id', element: <RecipeDetailPage /> },
       { path: 'recipes/:id/edit', element: <RecipeFormPage /> },
       { path: 'shopping', element: <ShoppingPage /> },
+      { path: 'log', element: <LogPage /> },
       { path: 'settings', element: <SettingsPage /> },
     ],
   },

@@ -4,6 +4,7 @@ export const en = {
   'nav.suggestions': 'Cook',
   'nav.recipes': 'Recipes',
   'nav.shopping': 'Shopping',
+  'nav.log': 'Log',
   'nav.settings': 'Settings',
 
   'common.add': 'Add',
@@ -201,6 +202,17 @@ export const en = {
   'shopping.searchPlaceholder': 'Add an ingredient to buy…',
   'shopping.markBought': 'Mark as bought',
   'shopping.bought': 'Moved to pantry',
+
+  'log.title': 'Cooking log',
+  'log.emptyTitle': 'Nothing recorded yet',
+  'log.emptyBody': 'Open a recipe and use "I cooked this" to start your log.',
+  'log.weekOf': 'Week of {date}',
+  'log.recordedDays': '{count} days recorded',
+  'log.servings': '{count} servings',
+  'log.deleteEntry': 'Delete {name}',
+  'log.weeklyTotal': 'Week total',
+  'log.dailyAverage': 'Average per recorded day',
+  'log.missingNutrition': '{count} entries have no nutrition data',
 
   'settings.title': 'Settings',
   'settings.language': 'Language',

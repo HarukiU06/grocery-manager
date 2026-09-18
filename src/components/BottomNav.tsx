@@ -6,6 +6,7 @@ const TABS: Array<{ to: string; key: TranslationKey; icon: string }> = [
   { to: '/suggestions', key: 'nav.suggestions', icon: '🍳' },
   { to: '/recipes', key: 'nav.recipes', icon: '📖' },
   { to: '/shopping', key: 'nav.shopping', icon: '🛒' },
+  { to: '/log', key: 'nav.log', icon: '📔' },
   { to: '/settings', key: 'nav.settings', icon: '⚙️' },
 ];
 

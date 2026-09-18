@@ -6,6 +6,7 @@ export const ja: Record<TranslationKey, string> = {
   'nav.suggestions': '作れる料理',
   'nav.recipes': 'レシピ',
   'nav.shopping': '買い物',
+  'nav.log': '記録',
   'nav.settings': '設定',
 
   'common.add': '追加',
@@ -203,6 +204,17 @@ export const ja: Record<TranslationKey, string> = {
   'shopping.searchPlaceholder': '買う食材を追加…',
   'shopping.markBought': '購入済みにする',
   'shopping.bought': '在庫に移動しました',
+
+  'log.title': '調理ログ',
+  'log.emptyTitle': 'まだ記録がありません',
+  'log.emptyBody': 'レシピを開いて「作った」から記録を始めましょう。',
+  'log.weekOf': '{date}の週',
+  'log.recordedDays': '{count}日分を記録',
+  'log.servings': '{count}人分',
+  'log.deleteEntry': '{name}を削除',
+  'log.weeklyTotal': '週の合計',
+  'log.dailyAverage': '記録した日の平均',
+  'log.missingNutrition': '{count}件は栄養データがありません',
 
   'settings.title': '設定',
   'settings.language': '言語',
