@@ -4,7 +4,7 @@ Guidance for AI agents working in this repository.
 
 ## What this is
 
-Grocery Manager: a bilingual (JA/EN) React single-page app that tracks pantry contents and suggests recipes that can be cooked now or with one or two extra purchases. No backend; state persists to localStorage. See `README.md` for features, `docs/superpowers/specs/2026-09-18-grocery-manager-design.md` for the design and `docs/superpowers/plans/2026-09-18-grocery-manager.md` for the build plan.
+Grocery Manager: a bilingual (JA/EN) React single-page app that tracks pantry contents, suggests recipes that can be cooked now or with a small purchase, estimates nutrition, and keeps a weekly cooking log. No backend; state persists to localStorage. See `README.md` for features. Design and plan documents live in `docs/superpowers/specs/` and `docs/superpowers/plans/`; the v2 spec, `2026-09-19-grocery-manager-v2-design.md`, is the current one.
 
 Stack: Vite, React 19, TypeScript (strict), Tailwind CSS v4, Zustand v5 (`persist`), react-router-dom v7 (hash router), Vitest + Testing Library, ESLint flat config.
 
@@ -27,7 +27,12 @@ npm run build    # tsc -b && vite build (must pass before finishing any task)
 - `verbatimModuleSyntax` is on: use `import type` for types. `noUnusedLocals` / `noUnusedParameters` are on.
 - Do not sync props into state with `useEffect`; mount a keyed child instead (see `PantryItemSheet.tsx`). The `react-hooks/set-state-in-effect` lint rule enforces this.
 - Tests reset the store with `useAppStore.setState(defaultPersistedState('en'))` in `beforeEach`. Page tests render through `renderWithRouter` from `src/test/render.tsx`.
-- Commit per task with conventional-style messages. Local repository only; do not add or push to a remote unless asked.
+- `toGrams` returns `null` when a conversion is unknown. Callers report it; never substitute a guess.
+- Only required ingredients count toward nutrition. Optional ones and amount-less ones are reported as excluded.
+- Weeks start Monday, and weekly averages divide by recorded days rather than by seven.
+- Recipe import never saves a recipe. It prefills the form so the normal validation still runs.
+- Nutrition values are estimates and every surface says so. `src/data/data.test.ts` enforces row completeness, plausible ranges and energy consistency with the macronutrients.
+- Commit per task with conventional-style messages. `main` auto-deploys to GitHub Pages, so push only finished work.
 
 ## Where things live
 
@@ -35,13 +40,19 @@ npm run build    # tsc -b && vite build (must pass before finishing any task)
 |---|---|
 | Types and constants | `src/domain/types.ts` |
 | Recipe matching / buy-to-unlock | `src/domain/matching.ts` |
+| Ingredient filter predicate | `src/domain/recipeFilter.ts` |
+| Unit and gram conversion | `src/domain/units.ts`, `src/data/conversions.ts` |
+| Nutrition totals | `src/domain/nutrition.ts`, `src/data/nutrition.ts` |
+| Daily reference intakes | `src/domain/targets.ts`, `src/data/targets.ts` |
+| Weekly cooking log | `src/domain/cookingLog.ts` |
+| Recipe import parsers | `src/domain/recipeImport/` |
 | Servings scaling and amount formatting | `src/domain/scaling.ts` |
 | Ingredient search (JA/EN, kana folding) | `src/domain/search.ts` |
 | Store, actions, storage fallback | `src/store/useAppStore.ts` |
 | Derived hooks (all ingredients, lookups) | `src/store/selectors.ts` |
 | Import/export and migrations | `src/store/exportImport.ts`, `src/store/migrations.ts` |
 | Preset data | `src/data/ingredients.ts`, `src/data/staples.ts`, `src/data/recipes/*.ts` |
-| Screens | `src/features/<pantry|suggestions|recipes|shopping|settings>/` |
+| Screens | `src/features/<pantry|suggestions|recipes|shopping|log|settings>/` |
 | Shared UI | `src/components/` |
 
 ## Skill activation
