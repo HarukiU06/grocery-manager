@@ -45,4 +45,56 @@ describe('export/import', () => {
   it('builds a dated filename', () => {
     expect(exportFilename('2026-09-18')).toBe('grocery-manager-2026-09-18.json');
   });
+  it('drops unknown keys so a backup cannot replace store actions', () => {
+    const parsed = parseImportedState(
+      JSON.stringify({ ...defaultPersistedState(), importState: 'x', resetAll: 1, extra: true }),
+    );
+    expect(Object.keys(parsed).sort()).toEqual(Object.keys(defaultPersistedState()).sort());
+  });
+  it('rejects recipes whose nested ingredients are malformed', () => {
+    const recipe = { id: 'custom-1', name: { en: 'Toast' }, ingredients: [null], steps: {} };
+    expect(() => parseImportedState(JSON.stringify({ ...defaultPersistedState(), customRecipes: [recipe] }))).toThrow(
+      'invalid-recipe',
+    );
+    const unnamed = { ...recipe, name: { en: 5 }, ingredients: [] };
+    expect(() => parseImportedState(JSON.stringify({ ...defaultPersistedState(), customRecipes: [unnamed] }))).toThrow(
+      'invalid-recipe',
+    );
+  });
+  it('drops wrongly typed optional fields and fills required ones', () => {
+    const parsed = parseImportedState(
+      JSON.stringify({
+        ...defaultPersistedState(),
+        trackExpiry: 'yes',
+        amountDisplay: 'kg',
+        nutritionTarget: { a: 1 },
+        pantry: [{ ingredientId: 'egg', addedOn: '2026-09-18', quantity: { amount: 'x', unit: 'g' }, location: 'roof', expiresOn: 7 }],
+        customRecipes: [
+          {
+            id: 'custom-1',
+            name: { en: 'Toast', ja: 3 },
+            cuisine: 'martian',
+            baseServings: -1,
+            ingredients: [{ ingredientId: 'bread', unit: 'parsec', amount: 2 }],
+            steps: { en: ['Toast it', 4], ja: 'no' },
+            isPreset: true,
+          },
+        ],
+      }),
+    );
+    expect(parsed.trackExpiry).toBe(true);
+    expect(parsed.amountDisplay).toBe('recipe');
+    expect(parsed.nutritionTarget).toBe('off');
+    expect(parsed.pantry).toEqual([{ ingredientId: 'egg', addedOn: '2026-09-18' }]);
+    expect(parsed.customRecipes[0]).toEqual({
+      id: 'custom-1',
+      name: { en: 'Toast' },
+      cuisine: 'other',
+      category: 'main',
+      baseServings: 2,
+      ingredients: [{ ingredientId: 'bread', amount: 2 }],
+      steps: { en: ['Toast it'] },
+      isPreset: false,
+    });
+  });
 });

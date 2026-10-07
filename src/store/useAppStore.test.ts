@@ -148,4 +148,9 @@ describe('version 2 settings and cooking log', () => {
     expect(useAppStore.getState().trackExpiry).toBe(true);
     expect(useAppStore.getState().language).toBe('ja');
   });
+  it('ignores keys outside the persisted state on import', () => {
+    const s = useAppStore.getState();
+    s.importState({ ...defaultPersistedState('en'), importState: 'x' } as unknown as Parameters<typeof s.importState>[0]);
+    expect(typeof useAppStore.getState().importState).toBe('function');
+  });
 });

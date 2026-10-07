@@ -204,7 +204,8 @@ export const useAppStore = create<AppStore>()(
         get().addPantryItem(ingredientId);
       },
 
-      importState: (state) => set({ ...state, schemaVersion: CURRENT_SCHEMA_VERSION }),
+      // Copy persisted keys only, so an imported object can never replace an action.
+      importState: (state) => set({ ...pickPersisted(state as AppStore), schemaVersion: CURRENT_SCHEMA_VERSION }),
       resetAll: () => set({ ...defaultPersistedState(get().language) }),
 
       setTrackExpiry: (trackExpiry) => set({ trackExpiry }),
