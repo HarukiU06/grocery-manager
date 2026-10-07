@@ -1,7 +1,27 @@
 import { toAsciiDigits } from '../unitAliases';
 import type { ParsedRecipe } from './types';
 
-const SCRIPT = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+const LD_JSON_TYPE = /\stype\s*=\s*["']?application\/ld\+json/i;
+
+/**
+ * Yields the body of every `<script type="application/ld+json">` block. The page is
+ * untrusted, so this scans with indexOf in one linear pass; a single regex over the
+ * whole page backtracks quadratically on inputs such as many unclosed `<script` tags.
+ */
+function* ldJsonBlocks(html: string): Generator<string> {
+  const lower = html.toLowerCase();
+  let pos = 0;
+  for (;;) {
+    const start = lower.indexOf('<script', pos);
+    if (start === -1) return;
+    const tagEnd = lower.indexOf('>', start);
+    if (tagEnd === -1) return;
+    const close = lower.indexOf('</script', tagEnd);
+    if (close === -1) return;
+    pos = close + '</script'.length;
+    if (LD_JSON_TYPE.test(html.slice(start + '<script'.length, tagEnd))) yield html.slice(tagEnd + 1, close);
+  }
+}
 
 function isRecipe(value: unknown): boolean {
   if (typeof value !== 'object' || value === null) return false;
@@ -57,16 +77,14 @@ function toServings(value: unknown): number | undefined {
 
 /** Reads the first schema.org Recipe in the page; a malformed block never stops the scan. */
 export function parseJsonLdRecipe(html: string): ParsedRecipe | null {
-  SCRIPT.lastIndex = 0;
-  let match: RegExpExecArray | null;
-  while ((match = SCRIPT.exec(html))) {
-    let data: unknown;
+  for (const block of ldJsonBlocks(html)) {
+    let recipe: Record<string, unknown> | null;
     try {
-      data = JSON.parse(match[1].trim());
+      // findRecipe recurses, so pathologically deep JSON is skipped like malformed JSON.
+      recipe = findRecipe(JSON.parse(block.trim()));
     } catch {
       continue;
     }
-    const recipe = findRecipe(data);
     if (!recipe) continue;
     const rawIngredients = Array.isArray(recipe.recipeIngredient) ? recipe.recipeIngredient : [];
     return {

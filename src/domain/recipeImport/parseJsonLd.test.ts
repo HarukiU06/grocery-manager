@@ -46,4 +46,15 @@ describe('parseJsonLdRecipe', () => {
   it('returns null when there is no recipe', () => {
     expect(parseJsonLdRecipe(page(''))).toBeNull();
   });
+  it('accepts attribute order and case variations', () => {
+    const html = `<SCRIPT id="x" TYPE='application/ld+json'>${JSON.stringify({ '@type': 'Recipe', name: 'Soup' })}</SCRIPT>`;
+    expect(parseJsonLdRecipe(html)?.name).toBe('Soup');
+  });
+  it('stays fast on hostile markup', () => {
+    const started = Date.now();
+    parseJsonLdRecipe('<script a'.repeat(50_000));
+    parseJsonLdRecipe('<script type="application/ld+json">'.repeat(50_000));
+    parseJsonLdRecipe(`<script type="application/ld+json">${'['.repeat(100_000)}${']'.repeat(100_000)}</script>`);
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
 });

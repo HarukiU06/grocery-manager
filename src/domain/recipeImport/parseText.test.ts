@@ -33,4 +33,9 @@ describe('parseIngredientLines', () => {
   it('skips blank and heading-only lines', () => {
     expect(parse('材料\n\n  \n塩 少々')).toHaveLength(1);
   });
+  it('skips overlong lines quickly', () => {
+    const started = Date.now();
+    expect(parse(`${'1'.repeat(50_000)}a a\n塩 少々`)).toHaveLength(1);
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
 });
