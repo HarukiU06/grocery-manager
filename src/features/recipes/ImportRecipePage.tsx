@@ -54,7 +54,8 @@ export function ImportRecipePage() {
       return;
     }
     resetParsed();
-    setLines(parseIngredientLines(html.replace(/<[^>]+>/g, '\n'), catalog));
+    // `[^<>]` keeps the scan linear on untrusted pages full of unclosed `<`.
+    setLines(parseIngredientLines(html.replace(/<[^<>]*>/g, '\n'), catalog));
   };
 
   const runParseText = () => {

@@ -9,6 +9,11 @@ const BULLET = /^[\s・*\-–—•‣●○◦\u3000]*(?:\d+[.)]\s*)?/;
 const PREFIX_UNIT = /^(.*?)(大さじ|大匙|小さじ|小匙|カップ)\s*(\d+(?:\.\d+)?(?:\/\d+)?)$/;
 const TRAILING = /^(.*?)[\s:：]*(\d+(?:\.\d+)?(?:\/\d+)?)\s*([^\s\d]*)$/;
 const LEADING = /^(\d+(?:\.\d+)?(?:\/\d+)?)\s*([^\s\d]*)\s+(.+)$/;
+/**
+ * Ingredient lines are short. Longer lines (minified page text, pasted paragraphs) are
+ * skipped: they are never ingredients, and TRAILING backtracks quadratically on them.
+ */
+export const MAX_LINE_LENGTH = 200;
 
 function parseNumber(text: string): number | null {
   const fraction = /^(\d+)\/(\d+)$/.exec(text);
@@ -80,7 +85,7 @@ export function parseIngredientLines(text: string, catalog: Ingredient[]): Parse
   return text
     .split('\n')
     .map((line) => line.trim())
-    .filter(Boolean)
+    .filter((line) => line && line.length <= MAX_LINE_LENGTH)
     .map((line) => {
       const { name, amount, unit } = splitLine(line);
       return {
