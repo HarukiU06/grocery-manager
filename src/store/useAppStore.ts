@@ -3,6 +3,7 @@ import { createJSONStorage, persist, type StateStorage } from 'zustand/middlewar
 import { COMMON_STAPLE_IDS } from '../data/staples';
 import { todayIso } from '../domain/dates';
 import { newId } from '../domain/ids';
+import { addStock } from '../domain/stock';
 import {
   CURRENT_SCHEMA_VERSION,
   type AmountDisplay,
@@ -13,6 +14,7 @@ import {
   type NutritionTargetKey,
   type PantryItem,
   type PersistedState,
+  type Quantity,
   type Recipe,
 } from '../domain/types';
 import { clamp, defaultPersistedState, detectLanguage, migrate } from './migrations';
@@ -68,6 +70,11 @@ export interface AppActions {
   addPantryItem: (ingredientId: string, fields?: PantryItemFields) => void;
   updatePantryItem: (ingredientId: string, patch: PantryItemFields) => void;
   removePantryItem: (ingredientId: string) => void;
+  /**
+   * Adds a purchase to the pantry: on-hand amount plus the bought amount. When the units cannot be
+   * added together the bought amount replaces the old one. Without an amount the item is only ensured.
+   */
+  restockPantryItem: (ingredientId: string, bought?: Quantity) => void;
   addCommonStaples: () => number;
   createIngredient: (input: IngredientInput) => Ingredient;
   addCustomRecipe: (input: RecipeInput) => Recipe;
@@ -146,6 +153,14 @@ export const useAppStore = create<AppStore>()(
         })),
       removePantryItem: (ingredientId) =>
         set((state) => ({ pantry: state.pantry.filter((item) => item.ingredientId !== ingredientId) })),
+      restockPantryItem: (ingredientId, bought) => {
+        const existing = get().pantry.find((item) => item.ingredientId === ingredientId);
+        if (!bought) {
+          if (!existing) get().addPantryItem(ingredientId);
+          return;
+        }
+        get().addPantryItem(ingredientId, { quantity: addStock(existing?.quantity, bought) ?? bought });
+      },
       addCommonStaples: () => {
         const have = new Set(get().pantry.map((item) => item.ingredientId));
         const missing = COMMON_STAPLE_IDS.filter((id) => !have.has(id));

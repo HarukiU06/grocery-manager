@@ -47,6 +47,7 @@ npm run build    # tsc -b && vite build (must pass before finishing any task)
 | Weekly cooking log | `src/domain/cookingLog.ts` |
 | Recipe import parsers | `src/domain/recipeImport/` |
 | Servings scaling and amount formatting | `src/domain/scaling.ts` |
+| Restock arithmetic (on hand + bought) | `src/domain/stock.ts` |
 | Ingredient search (JA/EN, kana folding) | `src/domain/search.ts` |
 | Store, actions, storage fallback | `src/store/useAppStore.ts` |
 | Derived hooks (all ingredients, lookups) | `src/store/selectors.ts` |

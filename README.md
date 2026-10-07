@@ -24,7 +24,7 @@ Each browser/device keeps its own data (see [How data is stored](#how-data-is-st
 
 ## Features
 
-- **Pantry** — search the bilingual ingredient catalog and add what you have. Quantity is a number plus a unit, with an optional note, best-before date and storage location. One tap adds the common Japanese staples.
+- **Pantry** — search the bilingual ingredient catalog and add what you have. Search also lists what is already in the pantry with its amount; tapping any result asks how much you bought and adds it to what is on hand (g/kg, ml/L and spoons convert; units that cannot be added replace the old amount). Quantity is a number plus a unit, with an optional note, best-before date and storage location. One tap adds the common Japanese staples.
 - **Cook** — three sections: *Ready to cook*, *Almost there* (missing up to N ingredients, N configurable 1 to 5) and *Buy this, unlock that*. Recipes that use expiring items float to the top. Filter by cuisine, and by the ingredients you want to use up.
 - **Recipes** — browse, search and import. Detail view scales amounts to the selected servings, switches between the recipe's own units and grams, marks each ingredient as *Have* or *Missing*, and estimates nutrition. Duplicate a preset to customize it, or write one from scratch in either or both languages.
 - **Recipe import** — paste a recipe page URL and the app reads its structured data, or paste the ingredient list as text. Import never saves directly: it fills the recipe form for you to review.

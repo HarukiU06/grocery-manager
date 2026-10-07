@@ -4,27 +4,37 @@ import { EmptyState } from '../../components/EmptyState';
 import { PageHeader } from '../../components/PageHeader';
 import { useToastStore } from '../../components/toastStore';
 import { todayIso } from '../../domain/dates';
+import { formatQuantity } from '../../domain/scaling';
 import { useLang, useT } from '../../i18n';
-import { useIngredientLookup, usePantryIds } from '../../store/selectors';
+import { useIngredientLookup } from '../../store/selectors';
 import { useAppStore } from '../../store/useAppStore';
 import { groupPantryByCategory } from './groupPantry';
 import { IngredientPicker } from './IngredientPicker';
 import { PantryGroup } from './PantryGroup';
 import { PantryItemSheet } from './PantryItemSheet';
+import { RestockSheet } from './RestockSheet';
 
 export function PantryPage() {
   const t = useT();
   const lang = useLang();
   const pantry = useAppStore((s) => s.pantry);
-  const addPantryItem = useAppStore((s) => s.addPantryItem);
   const addCommonStaples = useAppStore((s) => s.addCommonStaples);
   const showToast = useToastStore((s) => s.show);
   const lookup = useIngredientLookup();
-  const pantryIds = usePantryIds();
   const [editing, setEditing] = useState<string | null>(null);
+  const [restocking, setRestocking] = useState<string | null>(null);
   const today = todayIso();
 
   const groups = useMemo(() => groupPantryByCategory(pantry, lookup, lang), [pantry, lookup, lang]);
+
+  const pantryHints = useMemo(() => {
+    const hints = new Map<string, string>();
+    for (const item of pantry) {
+      const amount = item.quantity && formatQuantity(item.quantity.amount, item.quantity.unit, lang, t);
+      hints.set(item.ingredientId, amount ? t('pantry.inPantryAmount', { amount }) : t('pantry.inPantry'));
+    }
+    return hints;
+  }, [pantry, lang, t]);
 
   const handleStaples = () => {
     const count = addCommonStaples();
@@ -44,10 +54,9 @@ export function PantryPage() {
         }
       />
       <IngredientPicker
-        onPick={(id) => addPantryItem(id)}
+        onPick={setRestocking}
         placeholder={t('pantry.searchPlaceholder')}
-        disabledIds={pantryIds}
-        disabledLabel={t('pantry.inPantry')}
+        hint={(id) => pantryHints.get(id)}
       />
       <div className="mt-4">
         {pantry.length === 0 ? (
@@ -63,6 +72,7 @@ export function PantryPage() {
         )}
       </div>
       <PantryItemSheet ingredientId={editing} onClose={() => setEditing(null)} />
+      <RestockSheet ingredientId={restocking} onClose={() => setRestocking(null)} />
     </div>
   );
 }

@@ -20,6 +20,25 @@ describe('pantry actions', () => {
     s.removePantryItem('egg');
     expect(useAppStore.getState().pantry).toHaveLength(0);
   });
+  it('restocks by adding the bought amount to what is on hand', () => {
+    const s = useAppStore.getState();
+    s.restockPantryItem('egg', { amount: 6, unit: 'pcs' });
+    s.restockPantryItem('egg', { amount: 4, unit: 'pcs' });
+    expect(useAppStore.getState().pantry[0].quantity).toEqual({ amount: 10, unit: 'pcs' });
+    s.restockPantryItem('egg');
+    expect(useAppStore.getState().pantry[0].quantity).toEqual({ amount: 10, unit: 'pcs' });
+  });
+  it('restock replaces an amount whose unit cannot be added', () => {
+    const s = useAppStore.getState();
+    s.addPantryItem('egg', { quantity: { amount: 2, unit: 'pcs' }, location: 'fridge' });
+    s.restockPantryItem('egg', { amount: 120, unit: 'g' });
+    expect(useAppStore.getState().pantry[0]).toMatchObject({ quantity: { amount: 120, unit: 'g' }, location: 'fridge' });
+  });
+  it('restock without an amount adds a missing item', () => {
+    useAppStore.getState().restockPantryItem('milk');
+    expect(useAppStore.getState().pantry).toHaveLength(1);
+    expect(useAppStore.getState().pantry[0].quantity).toBeUndefined();
+  });
   it('adds common staples once', () => {
     const s = useAppStore.getState();
     s.addPantryItem('salt');

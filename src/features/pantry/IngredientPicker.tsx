@@ -11,6 +11,8 @@ interface Props {
   placeholder: string;
   disabledIds?: Set<string>;
   disabledLabel?: string;
+  /** Replaces the category label on a result, e.g. to show what is already on hand. */
+  hint?: (ingredientId: string) => string | undefined;
   allowCreate?: boolean;
   autoFocus?: boolean;
 }
@@ -22,6 +24,7 @@ export function IngredientPicker({
   placeholder,
   disabledIds,
   disabledLabel,
+  hint,
   allowCreate = true,
   autoFocus = false,
 }: Props) {
@@ -58,7 +61,9 @@ export function IngredientPicker({
                 >
                   <span>{localize(ingredient.name, lang)}</span>
                   <span className="text-xs text-stone-500">
-                    {disabled && disabledLabel ? disabledLabel : t(`category.${ingredient.category}`)}
+                    {disabled && disabledLabel
+                      ? disabledLabel
+                      : (hint?.(ingredient.id) ?? t(`category.${ingredient.category}`))}
                   </span>
                 </button>
               </li>
